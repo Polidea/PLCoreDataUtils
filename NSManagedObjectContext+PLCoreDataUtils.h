@@ -42,7 +42,7 @@
 -(NSManagedObject*) insertNewEntityWithName:(NSString*)entityName;
 -(NSManagedObject*)insertOrFetchEntityWithName:(NSString *)entityName predicate:(NSPredicate *)predicate;
 -(NSInteger)removeEntitiesWithName:(NSString *)entityName predicate:(NSPredicate *)predicate;
--(NSInteger) removeEntities:(NSSet*)set inContext:(NSManagedObjectContext *)context;
+-(NSInteger) removeEntities:(NSSet*)set;
 -(BOOL) saveChangesErrorDescription:(NSString**)description;
 
 -(NSEntityDescription*) entityDescriptionForName:(NSString*)entityName;

@@ -150,9 +150,9 @@
     return [results count];
 }
 
--(NSInteger) removeEntities:(NSSet*)set inContext:(NSManagedObjectContext *)context{
+-(NSInteger) removeEntities:(NSSet*)set{
     for(NSManagedObject * obj in [NSSet setWithSet:set]){
-        [context deleteObject:obj];
+        [self deleteObject:obj];
     }
     return [set count];
 }
