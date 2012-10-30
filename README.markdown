@@ -2,14 +2,10 @@
 
 A set of helper classes for CoreData.
 
----
-
 ## Installation
 
 * Add the files to your project (each class can be used separately)
 * (optional) If your project uses ARC, disable it for the added files (-fno-objc-arc)
-
----
 
 ## Usage
 
