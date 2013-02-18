@@ -27,8 +27,8 @@
  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import <CoreData/CoreData.h>
 #import "NSManagedObjectContext+PLCoreDataUtils.h"
-
 
 @implementation NSManagedObjectContext (PLCoreDataUtils)
 
@@ -113,9 +113,7 @@
 }
 
 -(NSManagedObject*)insertOrFetchEntityWithName:(NSString *)entityName predicate:(NSPredicate *)predicate {
-    NSEntityDescription * description = [self entityDescriptionForName:entityName];
-    NSFetchRequest * fetchRequest = [[[NSFetchRequest alloc] init] autorelease];
-    [fetchRequest setEntity:description];
+    NSFetchRequest * fetchRequest = [[[NSFetchRequest alloc] initWithEntityName:entityName] autorelease];
     [fetchRequest setPredicate:predicate];
 
     NSError * error = NULL;

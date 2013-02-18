@@ -1,9 +1,9 @@
 /*
- Copyright (c) 2012, Antoni Kędracki, Polidea
+ Copyright (c) 2011, Antoni Kędracki, Polidea
  All rights reserved.
- 
+
  mailto: akedracki@gmail.com
- 
+
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
  * Redistributions of source code must retain the above copyright
@@ -14,7 +14,7 @@
  * Neither the name of the Polidea nor the
  names of its contributors may be used to endorse or promote products
  derived from this software without specific prior written permission.
- 
+
  THIS SOFTWARE IS PROVIDED BY ANTONI KĘDRACKI, POLIDEA ''AS IS'' AND ANY
  EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
  WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -27,21 +27,16 @@
  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+
 #import <Foundation/Foundation.h>
-#import <CoreData/CoreData.h>
+#import "NSManagedObjectContext+PLCoreDataUtils.h"
 
-@protocol PLEntityObserver <NSObject>
+@interface PLDataSetMerger : NSObject
 
--(void) entityWithIdDidChange:(NSManagedObjectID*)entityId;
++(PLDataSetMerger *) mergerWithEntityName:(NSString*)entityName matchingPredicate:(NSPredicate*)predicate inContext:(NSManagedObjectContext*)context;
+-(id) initWithEntityName:(NSString*)entityName matchingPredicate:(NSPredicate*)predicate inContext:(NSManagedObjectContext*)context;
 
-@end
-
-@interface PLEntityObservatory : NSObject
-
-- (id)initInManagedObjectContext:(NSManagedObjectContext*)context;
-
--(void) addEntityObserver:(id<PLEntityObserver>)observer onId:(NSManagedObjectID*)entityId;
--(void) removeEntityObserver:(id<PLEntityObserver>)observer;
--(void) removeEntityObserver:(id<PLEntityObserver>)observer onId:(NSManagedObjectID*)entityId;
+-(void) mark:(NSManagedObject *)entry;
+-(NSInteger) removeUnmarked;
 
 @end
