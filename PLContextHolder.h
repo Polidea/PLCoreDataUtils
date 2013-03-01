@@ -32,14 +32,21 @@
 
 @interface PLContextHolder : NSObject
 
-+(id) holderAsChild:(PLContextHolder *)parentHolder;
-+(id) holderInContext:(NSManagedObjectContext*)context;
++ (id)holderAsChild:(PLContextHolder *)parentHolder;
++ (id)holderWithPrivateQueueAsChild:(PLContextHolder *)parentHolder;
++ (id)holderInContext:(NSManagedObjectContext *)context;
 
--(id) initAsChild:(PLContextHolder *)parentHolder;
--(id) initInContext:(NSManagedObjectContext*)context;
+- (id)initAsChild:(PLContextHolder *)parentHolder;
+- (id)initWithPrivateQueueAsChild:(PLContextHolder *)parentHolder;
+- (id)initInContext:(NSManagedObjectContext *)context;
 
-@property (nonatomic, retain, readonly) NSThread * contextThread;
-@property (nonatomic, retain, readonly) NSManagedObjectContext * context;
--(BOOL) isContextLoaded;
+@property(nonatomic, retain, readonly) NSThread *contextThread;
+@property(nonatomic, retain, readonly) NSManagedObjectContext *context;
+
+- (BOOL)isContextLoaded;
+
+- (BOOL)hasPrivateQueue;
+- (void)performBlock:(void (^)())block;
+- (void)performBlockAndWait:(void (^)())block;
 
 @end
