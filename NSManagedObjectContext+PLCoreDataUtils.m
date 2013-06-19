@@ -74,7 +74,7 @@
     }
 }
 
--(NSArray*)fetchObjectWithEntityName:(NSString *)entityName predicate:(NSPredicate *)predicate significantValue:(NSString *)valueKey greatest:(BOOL)greatest{
+-(NSManagedObject*)fetchObjectWithEntityName:(NSString *)entityName predicate:(NSPredicate *)predicate significantValue:(NSString *)valueKey greatest:(BOOL)greatest{
     NSEntityDescription * description = [self entityDescriptionForName:entityName];
     NSFetchRequest * fetchRequest = [[[NSFetchRequest alloc] init] autorelease];
     [fetchRequest setEntity:description];
