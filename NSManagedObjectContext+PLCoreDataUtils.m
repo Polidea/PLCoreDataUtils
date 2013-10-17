@@ -33,12 +33,7 @@
 @implementation NSManagedObjectContext (PLCoreDataUtils)
 
 -(NSManagedObject*)fetchObjectWithEntityName:(NSString *)entityName predicate:(NSPredicate *)predicate{
-    NSArray * resArray = [self fetchObjectsWithEntityName:entityName predicate:predicate orderKey:nil];
-    if(resArray == nil || [resArray count] == 0){
-        return nil;
-    } else{
-        return [resArray objectAtIndex:0];
-    }
+    return [self fetchObjectWithEntityName:entityName predicate:predicate significantValue:nil greatest:YES];
 }
 
 -(NSArray*)fetchObjectsWithEntityName:(NSString *)entityName predicate:(NSPredicate *)predicate{
