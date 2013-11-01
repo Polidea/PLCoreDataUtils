@@ -29,99 +29,138 @@
 
 #import "PLContextHolder.h"
 
-@interface PLContextHolder() 
+@interface PLContextHolder ()
 
--(void) mergeChangesIntoMainContext:(NSNotification*)notification;
+- (void)mergeChangesIntoMainContext:(NSNotification *)notification;
 
 @end
 
 @implementation PLContextHolder {
-    NSThread * contextThread;
-    NSManagedObjectContext * context;
-    PLContextHolder * parentHolder;
+    NSThread *_contextThread;
+    dispatch_queue_t _privateQueue;
+    NSManagedObjectContext *_context;
+    PLContextHolder *_parentHolder;
 }
 
-+ (id)holderAsChild:(PLContextHolder *)aParentHolder {
-    return [[[PLContextHolder alloc] initAsChild:aParentHolder] autorelease];
++ (id)holderAsChild:(PLContextHolder *)parentHolder {
+    return [[PLContextHolder alloc] initAsChild:parentHolder];
 }
 
-+ (id)holderInContext:(NSManagedObjectContext *)aContext {
-    return [[[PLContextHolder alloc] initInContext:aContext] autorelease];
++ (id)holderWithPrivateQueueAsChild:(PLContextHolder *)parentHolder {
+    return [[PLContextHolder alloc] initWithPrivateQueueAsChild:parentHolder];
 }
 
-- (id)initAsChild:(PLContextHolder *)aParentHolder {
++ (id)holderInContext:(NSManagedObjectContext *)context {
+    return [[PLContextHolder alloc] initInContext:context];
+}
+
+- (id)initAsChild:(PLContextHolder *)parentHolder {
     self = [super init];
-    if(self){
-        if(aParentHolder == nil){
+    if (self) {
+        if (parentHolder == nil) {
             @throw [NSException exceptionWithName:NSInvalidArgumentException
                                            reason:@"a parent holder must have been provided"
                                          userInfo:nil];
         }
 
-        parentHolder = [aParentHolder retain];
+        _parentHolder = parentHolder;
     }
     return self;
 }
 
-- (id)initInContext:(NSManagedObjectContext *)aContext {
+- (id)initWithPrivateQueueAsChild:(PLContextHolder *)parentHolder {
     self = [super init];
-    if(self){
-        if(aContext == nil){
+    if (self) {
+        if (parentHolder == nil) {
             @throw [NSException exceptionWithName:NSInvalidArgumentException
-                                           reason:@"a context must have been provided"
+                                           reason:@"a parent holder must have been provided"
                                          userInfo:nil];
         }
 
-        context = [aContext retain];
-        contextThread = [[NSThread currentThread] retain];
+        _parentHolder = parentHolder;
+
+        _privateQueue = dispatch_queue_create(NULL, NULL);
+        dispatch_sync(_privateQueue, ^{
+            [self context];
+        });
     }
     return self;
 }
 
+- (id)initInContext:(NSManagedObjectContext *)context {
+    self = [super init];
+    if (self) {
+        if (context == nil) {
+            @throw [NSException exceptionWithName:NSInvalidArgumentException
+                                           reason:@"a _context must have been provided"
+                                         userInfo:nil];
+        }
+
+        _context = context;
+        _contextThread = [NSThread currentThread];
+    }
+    return self;
+}
 
 - (void)dealloc {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
-    [context release];
-    [contextThread release];
-    [parentHolder release];
-    [super dealloc];
+    _privateQueue = nil;
 }
 
--(void)mergeChangesIntoMainContext:(NSNotification *)notification{
-    if(notification == nil || notification.userInfo == nil){
+- (void)mergeChangesIntoMainContext:(NSNotification *)notification {
+    if (notification == nil || notification.userInfo == nil) {
         NSLog(@"PLContextHolder: merge notification is empty");
     }
-    [parentHolder.context performSelector:@selector(mergeChangesFromContextDidSaveNotification:)
-                                 onThread:parentHolder.contextThread
-                               withObject:notification
-                            waitUntilDone:YES];
+    [_parentHolder.context performSelector:@selector(mergeChangesFromContextDidSaveNotification:)
+                                  onThread:_parentHolder.contextThread
+                                withObject:notification
+                             waitUntilDone:YES];
 }
 
 - (NSThread *)contextThread {
-    return contextThread;
+    return _contextThread;
 }
 
--(NSManagedObjectContext *)context{
-    if(![self isContextLoaded]){
-        contextThread = [[NSThread currentThread] retain];
+- (NSManagedObjectContext *)context {
+    if (![self isContextLoaded]) {
+        _contextThread = [NSThread currentThread];
 
-        context = [[NSManagedObjectContext alloc] init];
-        [context setUndoManager:nil];
-        [context setPersistentStoreCoordinator:[parentHolder.context persistentStoreCoordinator]];
-        [context setMergePolicy:NSMergeByPropertyObjectTrumpMergePolicy];
-        
-        NSNotificationCenter *nc = [NSNotificationCenter defaultCenter]; 
+        _context = [[NSManagedObjectContext alloc] init];
+        [_context setUndoManager:nil];
+        [_context setPersistentStoreCoordinator:[_parentHolder.context persistentStoreCoordinator]];
+        [_context setMergePolicy:NSMergeByPropertyObjectTrumpMergePolicy];
+
+        NSNotificationCenter *nc = [NSNotificationCenter defaultCenter];
         [nc addObserver:self
                selector:@selector(mergeChangesIntoMainContext:)
                    name:NSManagedObjectContextDidSaveNotification
-                 object:context];
+                 object:_context];
     }
-    
-    return context;
+
+    return _context;
 }
 
 - (BOOL)isContextLoaded {
-    return context != nil;
+    return _context != nil;
 }
+
+- (BOOL)hasPrivateQueue {
+    return _privateQueue != nil;
+}
+
+- (void)performBlock:(void (^)())block {
+    if (_privateQueue == nil) {
+        @throw [NSException exceptionWithName:@"IllegalStateException" reason:@"performBlock: can only be called on _context holders that have a private queue" userInfo:nil];
+    }
+    dispatch_async(_privateQueue, block);
+}
+
+- (void)performBlockAndWait:(void (^)())block {
+    if (_privateQueue == nil) {
+        @throw [NSException exceptionWithName:@"IllegalStateException" reason:@"performBlockAndWait: can only be called on _context holders that have a private queue" userInfo:nil];
+    }
+    dispatch_sync(_privateQueue, block);
+}
+
 
 @end

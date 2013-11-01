@@ -46,7 +46,7 @@
 
 -(NSArray*)fetchObjectsWithEntityName:(NSString *)entityName predicate:(NSPredicate *)predicate orderKey:(NSString *)orderKey orderDirection:(BOOL)ascending{
     NSEntityDescription * description = [self entityDescriptionForName:entityName];
-    NSFetchRequest * fetchRequest = [[[NSFetchRequest alloc] init] autorelease];
+    NSFetchRequest * fetchRequest = [[NSFetchRequest alloc] init];
     [fetchRequest setEntity:description];
 
     if(predicate != nil){
@@ -54,9 +54,8 @@
     }
 
     if(orderKey != nil){
-        NSArray *sortDescriptors = [[NSArray alloc] initWithObjects:[[[NSSortDescriptor alloc] initWithKey:orderKey ascending:ascending] autorelease], nil];
+        NSArray *sortDescriptors = [[NSArray alloc] initWithObjects:[[NSSortDescriptor alloc] initWithKey:orderKey ascending:ascending], nil];
         [fetchRequest setSortDescriptors:sortDescriptors];
-        [sortDescriptors release];
     }
 
     NSError * error = NULL;
@@ -71,7 +70,7 @@
 
 -(NSManagedObject*)fetchObjectWithEntityName:(NSString *)entityName predicate:(NSPredicate *)predicate significantValue:(NSString *)valueKey greatest:(BOOL)greatest{
     NSEntityDescription * description = [self entityDescriptionForName:entityName];
-    NSFetchRequest * fetchRequest = [[[NSFetchRequest alloc] init] autorelease];
+    NSFetchRequest * fetchRequest = [[NSFetchRequest alloc] init];
     [fetchRequest setEntity:description];
 
     if(predicate != nil){
@@ -79,9 +78,8 @@
     }
 
     if(valueKey != nil){
-        NSArray *sortDescriptors = [[NSArray alloc] initWithObjects:[[[NSSortDescriptor alloc] initWithKey:valueKey ascending:!greatest] autorelease], nil];
+        NSArray *sortDescriptors = [[NSArray alloc] initWithObjects:[[NSSortDescriptor alloc] initWithKey:valueKey ascending:!greatest], nil];
         [fetchRequest setSortDescriptors:sortDescriptors];
-        [sortDescriptors release];
     }
 
     [fetchRequest setFetchLimit:1];
@@ -108,7 +106,7 @@
 }
 
 -(NSManagedObject*)insertOrFetchEntityWithName:(NSString *)entityName predicate:(NSPredicate *)predicate {
-    NSFetchRequest * fetchRequest = [[[NSFetchRequest alloc] initWithEntityName:entityName] autorelease];
+    NSFetchRequest * fetchRequest = [[NSFetchRequest alloc] initWithEntityName:entityName];
     [fetchRequest setPredicate:predicate];
 
     NSError * error = NULL;
@@ -124,7 +122,7 @@
 
 -(NSInteger)removeEntitiesWithName:(NSString *)entityName predicate:(NSPredicate *)predicate{
     NSEntityDescription * description = [self entityDescriptionForName:entityName];
-    NSFetchRequest * fetchRequest = [[[NSFetchRequest alloc] init] autorelease];
+    NSFetchRequest * fetchRequest = [[NSFetchRequest alloc] init];
     [fetchRequest setEntity:description];
     [fetchRequest setPredicate:predicate];
 
@@ -155,7 +153,7 @@
         NSError *error = nil;
         if (![self save:&error]) {
             if(description != nil){
-                (*description) = ([[[error localizedDescription] copy] autorelease]);
+                (*description) = ([[error localizedDescription] copy]);
             }
             NSLog(@"save operation failed: %@", [error localizedDescription]);
             return NO;
