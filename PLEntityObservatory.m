@@ -31,18 +31,16 @@
 #import "PLEntityObservatory.h"
 
 @interface PLEntityObservatory ()
-
--(void)managedObjectContextObjectsChanged:(NSNotification *)notification;
-
+- (void)managedObjectContextObjectsChanged:(NSNotification *)notification;
 @end
 
 @implementation PLEntityObservatory {
-    NSMutableDictionary * observedEntitiesIds;
+    NSMutableDictionary *observedEntitiesIds;
 }
 
 - (id)initInManagedObjectContext:(NSManagedObjectContext*)context {
     self = [super init];
-    if (self) {
+    if (self){
         observedEntitiesIds = [[NSMutableDictionary alloc] init];
 
         NSNotificationCenter *nc = [NSNotificationCenter defaultCenter];
@@ -56,75 +54,71 @@
 
 - (void)dealloc {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
-    [observedEntitiesIds release];
-    [super dealloc];
 }
 
--(void)managedObjectContextObjectsChanged:(NSNotification *)notification{
-    NSSet * changedObjects = [notification.userInfo objectForKey:@"refreshed"];
+- (void)managedObjectContextObjectsChanged:(NSNotification *)notification {
+    NSSet *changedObjects = (notification.userInfo)[@"refreshed"];
 
     //fast way out if we don't listen for anything
-    if ([observedEntitiesIds count] == 0){
+    if ([observedEntitiesIds count] == 0) {
         return;
     }
 
-    for (NSManagedObject * entity in changedObjects) {
-        NSManagedObjectID * changedId = entity.objectID;
+    for (NSManagedObject *entity in changedObjects) {
+        NSManagedObjectID *changedId = entity.objectID;
 
-        NSSet * observers = [observedEntitiesIds objectForKey:changedId];
-        if(observers == nil){
+        NSSet *observers = observedEntitiesIds[changedId];
+        if(observers == nil) {
             continue;
         }
 
-        for (NSValue * observer in observers) {
+        for (NSValue *observer in observers) {
             [[observer nonretainedObjectValue] entityWithIdDidChange:changedId];
         }
     }
 }
 
--(void) addEntityObserver:(id<PLEntityObserver>)observer onId:(NSManagedObjectID*)entityId{
-    NSMutableSet * observers = [observedEntitiesIds objectForKey:entityId];
-    if(observers == nil){
+- (void)addEntityObserver:(id<PLEntityObserver>)observer onId:(NSManagedObjectID*)entityId {
+    NSMutableSet *observers = observedEntitiesIds[entityId];
+    if(observers == nil) {
         observers = [[NSMutableSet alloc] init];
-        [observedEntitiesIds setObject:observers forKey:entityId];
-        [observers release];
+        observedEntitiesIds[entityId] = observers;
     }
 
     [observers addObject:[NSValue valueWithNonretainedObject:observer]];
 }
 
--(void) removeEntityObserver:(id<PLEntityObserver>) observer{
-    NSMutableSet * observedIds = [NSMutableSet set];
-    NSValue * idValue = [NSValue valueWithNonretainedObject:observer];
+- (void)removeEntityObserver:(id<PLEntityObserver>)observer {
+    NSMutableSet *observedIds = [NSMutableSet set];
+    NSValue *idValue = [NSValue valueWithNonretainedObject:observer];
 
-    for (NSManagedObjectID * entityId in [observedEntitiesIds keyEnumerator]) {
-        NSMutableSet * observers = [observedEntitiesIds objectForKey:entityId];
-        if(observers == nil){
+    for (NSManagedObjectID *entityId in [observedEntitiesIds keyEnumerator]) {
+        NSMutableSet *observers = observedEntitiesIds[entityId];
+        if(observers == nil) {
             continue;
         }
 
-        if([observers containsObject:idValue]){
+        if([observers containsObject:idValue]) {
             [observedIds addObject:entityId];
         }
     }
 
-    for(NSManagedObjectID * entityId in observedIds){
+    for(NSManagedObjectID *entityId in observedIds) {
         [self removeEntityObserver:observer onId:entityId];
     }
 }
 
--(void) removeEntityObserver:(id<PLEntityObserver>) observer onId:(NSManagedObjectID*)entityId{
-    NSMutableSet * observers = [observedEntitiesIds objectForKey:entityId];
-    if(observers == nil){
+- (void)removeEntityObserver:(id<PLEntityObserver>)observer onId:(NSManagedObjectID*)entityId {
+    NSMutableSet *observers = observedEntitiesIds[entityId];
+    if(observers == nil) {
         return;
     }
 
-    NSValue * idValue = [NSValue valueWithNonretainedObject:observer];
+    NSValue *idValue = [NSValue valueWithNonretainedObject:observer];
     if([observers containsObject:idValue]){
         [observers removeObject:idValue];
     }
-
-    if([observers count] == 0){
+    if([observers count] == 0) {
         [observedEntitiesIds removeObjectForKey:entityId];
     }
 }

@@ -31,17 +31,12 @@
 #import <CoreData/CoreData.h>
 
 @protocol PLEntityObserver <NSObject>
-
--(void) entityWithIdDidChange:(NSManagedObjectID*)entityId;
-
+- (void)entityWithIdDidChange:(NSManagedObjectID*)entityId;
 @end
 
 @interface PLEntityObservatory : NSObject
-
 - (id)initInManagedObjectContext:(NSManagedObjectContext*)context;
-
--(void) addEntityObserver:(id<PLEntityObserver>)observer onId:(NSManagedObjectID*)entityId;
--(void) removeEntityObserver:(id<PLEntityObserver>)observer;
--(void) removeEntityObserver:(id<PLEntityObserver>)observer onId:(NSManagedObjectID*)entityId;
-
+- (void)addEntityObserver:(id<PLEntityObserver>)observer onId:(NSManagedObjectID*)entityId;
+- (void)removeEntityObserver:(id<PLEntityObserver>)observer;
+- (void)removeEntityObserver:(id<PLEntityObserver>)observer onId:(NSManagedObjectID*)entityId;
 @end

@@ -33,10 +33,9 @@
 
 @interface PLDataSetMerger : NSObject
 
-+(PLDataSetMerger *) mergerWithEntityName:(NSString*)entityName matchingPredicate:(NSPredicate*)predicate inContext:(NSManagedObjectContext*)context;
--(id) initWithEntityName:(NSString*)entityName matchingPredicate:(NSPredicate*)predicate inContext:(NSManagedObjectContext*)context;
-
--(void) mark:(NSManagedObject *)entry;
--(NSInteger) removeUnmarked;
++ (PLDataSetMerger *)mergerWithEntityName:(NSString*)entityName matchingPredicate:(NSPredicate*)predicate inContext:(NSManagedObjectContext*)context;
+- (id)initWithEntityName:(NSString*)entityName matchingPredicate:(NSPredicate*)predicate inContext:(NSManagedObjectContext*)context;
+- (void)mark:(NSManagedObject *)entry;
+- (NSInteger)removeUnmarked;
 
 @end
