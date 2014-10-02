@@ -31,15 +31,12 @@
 #import <CoreData/CoreData.h>
 
 @interface PLContextHolder : NSObject
++ (id)holderAsChild:(PLContextHolder *)parentHolder;
++ (id)holderInContext:(NSManagedObjectContext *)context;
+- (id)initAsChild:(PLContextHolder *)parentHolder;
+- (id)initInContext:(NSManagedObjectContext *)context;
+- (BOOL)isContextLoaded;
 
-+(id) holderAsChild:(PLContextHolder *)parentHolder;
-+(id) holderInContext:(NSManagedObjectContext*)context;
-
--(id) initAsChild:(PLContextHolder *)parentHolder;
--(id) initInContext:(NSManagedObjectContext*)context;
-
-@property (nonatomic, retain, readonly) NSThread * contextThread;
-@property (nonatomic, retain, readonly) NSManagedObjectContext * context;
--(BOOL) isContextLoaded;
-
+@property (nonatomic, strong, readonly) NSThread *contextThread;
+@property (nonatomic, strong, readonly) NSManagedObjectContext *context;
 @end

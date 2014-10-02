@@ -42,11 +42,11 @@
 }
 
 + (id)holderAsChild:(PLContextHolder *)aParentHolder {
-    return [[[PLContextHolder alloc] initAsChild:aParentHolder] autorelease];
+    return [[PLContextHolder alloc] initAsChild:aParentHolder];
 }
 
 + (id)holderInContext:(NSManagedObjectContext *)aContext {
-    return [[[PLContextHolder alloc] initInContext:aContext] autorelease];
+    return [[PLContextHolder alloc] initInContext:aContext];
 }
 
 - (id)initAsChild:(PLContextHolder *)aParentHolder {
@@ -58,7 +58,7 @@
                                          userInfo:nil];
         }
 
-        parentHolder = [aParentHolder retain];
+        parentHolder = aParentHolder;
     }
     return self;
 }
@@ -72,8 +72,8 @@
                                          userInfo:nil];
         }
 
-        context = [aContext retain];
-        contextThread = [[NSThread currentThread] retain];
+        context = aContext;
+        contextThread = [NSThread currentThread];
     }
     return self;
 }
@@ -81,13 +81,9 @@
 
 - (void)dealloc {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
-    [context release];
-    [contextThread release];
-    [parentHolder release];
-    [super dealloc];
 }
 
--(void)mergeChangesIntoMainContext:(NSNotification *)notification{
+- (void)mergeChangesIntoMainContext:(NSNotification *)notification {
     if(notification == nil || notification.userInfo == nil){
         NSLog(@"PLContextHolder: merge notification is empty");
     }
@@ -101,9 +97,9 @@
     return contextThread;
 }
 
--(NSManagedObjectContext *)context{
-    if(![self isContextLoaded]){
-        contextThread = [[NSThread currentThread] retain];
+- (NSManagedObjectContext *)context {
+    if(![self isContextLoaded]) {
+        contextThread = [NSThread currentThread];
 
         context = [[NSManagedObjectContext alloc] init];
         [context setUndoManager:nil];
