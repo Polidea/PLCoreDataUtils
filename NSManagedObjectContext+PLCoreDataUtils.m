@@ -32,34 +32,35 @@
 
 @implementation NSManagedObjectContext (PLCoreDataUtils)
 
-- (NSManagedObject*)fetchObjectWithEntityName:(NSString *)entityName predicate:(NSPredicate *)predicate {
+- (NSManagedObject *)fetchObjectWithEntityName:(NSString *)entityName predicate:(NSPredicate *)predicate {
     return [self fetchObjectWithEntityName:entityName predicate:predicate significantValue:nil greatest:YES];
 }
 
-- (NSArray*)fetchObjectsWithEntityName:(NSString *)entityName predicate:(NSPredicate *)predicate {
+- (NSArray *)fetchObjectsWithEntityName:(NSString *)entityName predicate:(NSPredicate *)predicate {
     return [self fetchObjectsWithEntityName:entityName predicate:predicate orderKey:nil];
 }
 
-- (NSArray*)fetchObjectsWithEntityName:(NSString *)entityName predicate:(NSPredicate *)predicate orderKey:(NSString *)orderKey {
+- (NSArray *)fetchObjectsWithEntityName:(NSString *)entityName predicate:(NSPredicate *)predicate orderKey:(NSString *)orderKey {
     return [self fetchObjectsWithEntityName:entityName predicate:predicate orderKey:orderKey orderDirection:YES];
 }
 
-- (NSArray*)fetchObjectsWithEntityName:(NSString *)entityName predicate:(NSPredicate *)predicate orderKey:(NSString *)orderKey orderDirection:(BOOL)ascending {
+- (NSArray *)fetchObjectsWithEntityName:(NSString *)entityName predicate:(NSPredicate *)predicate orderKey:(NSString *)orderKey orderDirection:(BOOL)ascending {
     NSEntityDescription *description = [self entityDescriptionForName:entityName];
     NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init];
     [fetchRequest setEntity:description];
 
-    if(predicate != nil){
+    if (predicate != nil) {
         [fetchRequest setPredicate:predicate];
     }
-    if(orderKey != nil){
+
+    if (orderKey != nil) {
         NSArray *sortDescriptors = @[[[NSSortDescriptor alloc] initWithKey:orderKey ascending:ascending]];
         [fetchRequest setSortDescriptors:sortDescriptors];
     }
 
     NSError *error = NULL;
     NSArray *results = [self executeFetchRequest:fetchRequest error:&error];
-    if(error != nil){
+    if (error != nil) {
         NSLog(@"error fetching: %@", [error localizedDescription]);
         return nil;
     } else {
@@ -67,16 +68,16 @@
     }
 }
 
-- (NSManagedObject*)fetchObjectWithEntityName:(NSString *)entityName predicate:(NSPredicate *)predicate significantValue:(NSString *)valueKey greatest:(BOOL)greatest {
+- (NSManagedObject *)fetchObjectWithEntityName:(NSString *)entityName predicate:(NSPredicate *)predicate significantValue:(NSString *)valueKey greatest:(BOOL)greatest {
     NSEntityDescription *description = [self entityDescriptionForName:entityName];
     NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init];
     [fetchRequest setEntity:description];
 
-    if(predicate != nil) {
+    if (predicate != nil) {
         [fetchRequest setPredicate:predicate];
     }
 
-    if(valueKey != nil) {
+    if (valueKey != nil) {
         NSArray *sortDescriptors = @[[[NSSortDescriptor alloc] initWithKey:valueKey ascending:!greatest]];
         [fetchRequest setSortDescriptors:sortDescriptors];
     }
@@ -85,7 +86,7 @@
 
     NSError *error = NULL;
     NSArray *results = [self executeFetchRequest:fetchRequest error:&error];
-    if(error != nil) {
+    if (error != nil) {
         NSLog(@"error fetching: %@", [error localizedDescription]);
         return nil;
     } else {
@@ -93,25 +94,25 @@
     }
 }
 
-- (NSManagedObject*)fetchCopyOfObject:(NSManagedObject*)object {
-    if(object == nil){
+- (NSManagedObject *)fetchCopyOfObject:(NSManagedObject *)object {
+    if (object == nil) {
         return nil;
     }
     return [self existingObjectWithID:[object objectID] error:NULL];
 }
 
-- (NSManagedObject*)insertNewEntityWithName:(NSString*)entityName {
+- (NSManagedObject *)insertNewEntityWithName:(NSString *)entityName {
     return [NSEntityDescription insertNewObjectForEntityForName:entityName inManagedObjectContext:self];
 }
 
-- (NSManagedObject*)insertOrFetchEntityWithName:(NSString *)entityName predicate:(NSPredicate *)predicate {
+- (NSManagedObject *)insertOrFetchEntityWithName:(NSString *)entityName predicate:(NSPredicate *)predicate {
     NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] initWithEntityName:entityName];
     [fetchRequest setPredicate:predicate];
 
     NSError *error = NULL;
     NSArray *results = [self executeFetchRequest:fetchRequest error:&error];
-    if(results != nil){
-        if([results count] >= 1) {
+    if (results != nil) {
+        if ([results count] >= 1) {
             return results[0];
         }
     }
@@ -127,32 +128,32 @@
 
     NSError *error = NULL;
     NSArray *results = [self executeFetchRequest:fetchRequest error:&error];
-    if(error != NULL) {
+    if (error != NULL) {
         NSLog(@"error removing: %@", [error localizedDescription]);
     }
-    if(results == nil) {
+    if (results == nil) {
         return 0;
     }
 
-    for(NSManagedObject*object in results) {
+    for (NSManagedObject *object in results) {
         [self deleteObject:object];
     }
     return [results count];
 }
 
-- (NSInteger)removeEntities:(NSSet*)set {
-    for(NSManagedObject *obj in [NSSet setWithSet:set]) {
+- (NSInteger)removeEntities:(NSSet *)set {
+    for (NSManagedObject *obj in [NSSet setWithSet:set]) {
         [self deleteObject:obj];
     }
     return [set count];
 }
 
-- (BOOL)saveChangesErrorDescription:(NSString**)description {
+- (BOOL)saveChangesErrorDescription:(NSString **)description {
     @try {
         NSError *error = nil;
         if (![self save:&error]) {
-            if(description != nil) {
-                (*description)= ([[error localizedDescription] copy]);
+            if (description != nil) {
+                (*description) = ([[error localizedDescription] copy]);
             }
             NSLog(@"save operation failed: %@", [error localizedDescription]);
             return NO;
@@ -164,7 +165,7 @@
     return YES;
 }
 
-- (NSEntityDescription*)entityDescriptionForName:(NSString*)entityName {
+- (NSEntityDescription *)entityDescriptionForName:(NSString *)entityName {
     return [NSEntityDescription entityForName:entityName inManagedObjectContext:self];
 }
 

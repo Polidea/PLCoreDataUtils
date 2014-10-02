@@ -32,17 +32,20 @@
 
 @interface NSManagedObjectContext (PLCoreDataUtils)
 
--(NSManagedObject *)fetchObjectWithEntityName:(NSString *)entityName predicate:(NSPredicate *)predicate;
--(NSArray *)fetchObjectsWithEntityName:(NSString *)entityName predicate:(NSPredicate *)predicate;
--(NSArray *)fetchObjectsWithEntityName:(NSString *)entityName predicate:(NSPredicate *)predicate orderKey:(NSString *)orderKey;
--(NSArray *)fetchObjectsWithEntityName:(NSString *)entityName predicate:(NSPredicate *)predicate orderKey:(NSString *)orderKey orderDirection:(BOOL)ascending;
--(NSManagedObject *) fetchCopyOfObject:(NSManagedObject*)object;
--(NSManagedObject *)fetchObjectWithEntityName:(NSString *)entityName predicate:(NSPredicate *)predicate significantValue:(NSString *)valueKey greatest:(BOOL)greatest;
--(NSManagedObject *) insertNewEntityWithName:(NSString*)entityName;
--(NSManagedObject *)insertOrFetchEntityWithName:(NSString *)entityName predicate:(NSPredicate *)predicate;
--(NSInteger)removeEntitiesWithName:(NSString *)entityName predicate:(NSPredicate *)predicate;
--(NSInteger) removeEntities:(NSSet*)set;
--(BOOL) saveChangesErrorDescription:(NSString**)description;
--(NSEntityDescription *) entityDescriptionForName:(NSString*)entityName;
+- (NSManagedObject *)fetchObjectWithEntityName:(NSString *)entityName predicate:(NSPredicate *)predicate;
+- (NSArray *)fetchObjectsWithEntityName:(NSString *)entityName predicate:(NSPredicate *)predicate;
+- (NSArray *)fetchObjectsWithEntityName:(NSString *)entityName predicate:(NSPredicate *)predicate orderKey:(NSString *)orderKey;
+- (NSArray *)fetchObjectsWithEntityName:(NSString *)entityName predicate:(NSPredicate *)predicate orderKey:(NSString *)orderKey orderDirection:(BOOL)ascending;
+- (NSManagedObject *)fetchCopyOfObject:(NSManagedObject *)object;
+
+- (NSManagedObject *)fetchObjectWithEntityName:(NSString *)entityName predicate:(NSPredicate *)predicate significantValue:(NSString *)valueKey greatest:(BOOL)greatest;
+
+- (NSManagedObject *)insertNewEntityWithName:(NSString *)entityName;
+- (NSManagedObject *)insertOrFetchEntityWithName:(NSString *)entityName predicate:(NSPredicate *)predicate;
+- (NSInteger)removeEntitiesWithName:(NSString *)entityName predicate:(NSPredicate *)predicate;
+- (NSInteger)removeEntities:(NSSet *)set;
+- (BOOL)saveChangesErrorDescription:(NSString **)description;
+
+- (NSEntityDescription *)entityDescriptionForName:(NSString *)entityName;
 
 @end

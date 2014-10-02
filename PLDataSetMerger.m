@@ -33,32 +33,33 @@
 
 
 @implementation PLDataSetMerger {
-    NSManagedObjectContext * context;
-    NSMutableSet * entrySet;
+    NSManagedObjectContext *_context;
+    NSMutableSet *_entrySet;
 }
 
-+ (PLDataSetMerger *)mergerWithEntityName:(NSString*)entityName matchingPredicate:(NSPredicate*)predicate inContext:(NSManagedObjectContext*)context {
++ (PLDataSetMerger *)mergerWithEntityName:(NSString *)entityName matchingPredicate:(NSPredicate *)predicate inContext:(NSManagedObjectContext *)context {
     return [[self alloc] initWithEntityName:entityName matchingPredicate:predicate inContext:context];
 }
 
-- (id)initWithEntityName:(NSString*)entityName matchingPredicate:(NSPredicate*)predicate inContext:(NSManagedObjectContext*)aContext {
+- (id)initWithEntityName:(NSString *)entityName matchingPredicate:(NSPredicate *)predicate inContext:(NSManagedObjectContext *)context {
     self = [super init];
-    if (self){
-        context = aContext;
-        entrySet = [NSMutableSet setWithArray:[context fetchObjectsWithEntityName:entityName predicate:predicate]];
+    if (self) {
+
+        _context = context;
+        _entrySet = [NSMutableSet setWithArray:[_context fetchObjectsWithEntityName:entityName predicate:predicate]];
     }
     return self;
 }
 
 - (void)mark:(NSManagedObject *)entry {
-    [entrySet removeObject:entry];
+    [_entrySet removeObject:entry];
 }
 
 - (NSInteger)removeUnmarked {
-    for (NSManagedObject * entry in entrySet) {
-        [context deleteObject:entry];
+    for (NSManagedObject *entry in _entrySet) {
+        [_context deleteObject:entry];
     }
-    return [entrySet count];
+    return [_entrySet count];
 }
 
 @end
