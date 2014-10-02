@@ -148,23 +148,6 @@
     return [set count];
 }
 
-- (BOOL)saveChangesErrorDescription:(NSString **)description {
-    @try {
-        NSError *error = nil;
-        if (![self save:&error]) {
-            if (description != nil) {
-                (*description) = ([[error localizedDescription] copy]);
-            }
-            NSLog(@"save operation failed: %@", [error localizedDescription]);
-            return NO;
-        }
-    } @catch (NSException *exception) {
-        NSLog(@"save operation failed: %@", [exception description]);
-        return NO;
-    }
-    return YES;
-}
-
 - (NSEntityDescription *)entityDescriptionForName:(NSString *)entityName {
     return [NSEntityDescription entityForName:entityName inManagedObjectContext:self];
 }

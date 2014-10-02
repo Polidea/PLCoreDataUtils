@@ -1,9 +1,9 @@
 /*
- Copyright (c) 2012, Antoni Kędracki, Polidea
+ Copyright (c) 2013, Antoni Kędracki, Polidea
  All rights reserved.
- 
+
  mailto: akedracki@gmail.com
- 
+
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
  * Redistributions of source code must retain the above copyright
@@ -14,7 +14,7 @@
  * Neither the name of the Polidea nor the
  names of its contributors may be used to endorse or promote products
  derived from this software without specific prior written permission.
- 
+
  THIS SOFTWARE IS PROVIDED BY ANTONI KĘDRACKI, POLIDEA ''AS IS'' AND ANY
  EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
  WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -30,13 +30,17 @@
 #import <Foundation/Foundation.h>
 #import <CoreData/CoreData.h>
 
-@interface PLContextHolder : NSObject
-+ (id)holderAsChild:(PLContextHolder *)parentHolder;
-+ (id)holderInContext:(NSManagedObjectContext *)context;
-- (id)initAsChild:(PLContextHolder *)parentHolder;
-- (id)initInContext:(NSManagedObjectContext *)context;
-- (BOOL)isContextLoaded;
+@interface PLCoreDataStack : NSObject
 
-@property (nonatomic, strong, readonly) NSThread *contextThread;
-@property (nonatomic, strong, readonly) NSManagedObjectContext *context;
+@property(nonatomic, strong, readonly) NSManagedObjectContext *mainContext;
+@property(nonatomic, strong, readonly) NSManagedObjectContext *backgroundContext;
+
+- (id)initWithContext:(NSManagedObjectContext *)context;
+
+@end
+
+@interface NSManagedObjectContext (PLCoreDataStackAdditions)
+
+- (BOOL)propagatedSave:(NSError **)error;
+
 @end

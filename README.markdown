@@ -5,7 +5,6 @@ A set of helper classes for CoreData.
 ## Installation
 
 * Add the files to your project (each class can be used separately)
-* (optional) If your project uses ARC, disable it for the added files (-fno-objc-arc)
 
 ## Usage
 
@@ -14,19 +13,22 @@ A set of helper classes for CoreData.
 Methods for common tasks on NSManagedObjectContext:
 
 * different types of fetch (single/multiple objects, sorting, etc)
-* fetch or insert if not pressent
+* fetch or insert if not present
 * entity cloning
 
-### PLContextHolder
+### PLCoreDataStack
 
-Simplifies the creation of NSManagedObjectContext used on different threads. 
+Given a main context, setups a small main/background context stack.
 
-* wraps NSManagedObjectContext instances
-* child holder context merge into parent context
+* category for propagated saves 
 
-### PLEntityObservatory
+### PLDataSetMerger
 
-Allows for observing of changes on registered (by entityId) CoraData entities.
+Tool for tracking entities that should be removed after parsing a list of objects in network request response. Instead of removing all entities of a type, you:
+
+* add them to the set before parsing
+* 'mark' them if they are mentioned in the list
+* after parsing order the set to remove the unmentioned entities
 
 ---
 
