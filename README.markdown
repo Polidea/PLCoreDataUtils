@@ -1,6 +1,10 @@
-# PLCoreDataUtils
+---
 
-A set of helper classes for CoreData.
+__This repository is no longer maintained. Issue reports and pull requests will not be attended.__
+
+---
+
+# PLCoreDataUtils
 
 ## Installation
 
